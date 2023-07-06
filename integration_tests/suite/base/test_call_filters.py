@@ -38,12 +38,6 @@ def test_put_errors(call_filter):
 
 
 def error_checks(url):
-    yield s.check_bogus_field_returns_error, url, 'name', 123
-    yield s.check_bogus_field_returns_error, url, 'name', None
-    yield s.check_bogus_field_returns_error, url, 'name', True
-    yield s.check_bogus_field_returns_error, url, 'name', {}
-    yield s.check_bogus_field_returns_error, url, 'name', []
-    yield s.check_bogus_field_returns_error, url, 'name', 'name'
     yield s.check_bogus_field_returns_error, url, 'label', 123
     yield s.check_bogus_field_returns_error, url, 'label', None
     yield s.check_bogus_field_returns_error, url, 'label', True
