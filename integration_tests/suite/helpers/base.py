@@ -4,6 +4,7 @@
 import os
 
 from contextlib import contextmanager
+from uuid import uuid4
 
 from wazo_test_helpers.asset_launching_test_case import AssetLaunchingTestCase
 from wazo_test_helpers.bus import BusClient
@@ -59,6 +60,16 @@ class IntegrationTest(AssetLaunchingTestCase):
         )
         cls.mock_auth.set_token(token)
         cls._reset_auth_tenants()
+
+    @classmethod
+    def authenticate_user(cls, user) -> str:
+        token = MockUserToken(
+            str(uuid4()),
+            user['uuid'],
+            metadata={'uuid': user['uuid'], 'tenant_uuid': SUB_TENANT},
+        )
+        cls.mock_auth.set_token(token)
+        return token.token_id
 
     @classmethod
     def setup_service_token(cls):

@@ -1,11 +1,25 @@
 # Copyright 2017-2023 The Wazo Authors  (see the AUTHORS file)
 # SPDX-License-Identifier: GPL-3.0-or-later
+from __future__ import annotations
 
-from typing import cast
+from ..helpers.filesystem import (
+    FileSystemClient,
+    TenantFileSystemClient,
+)
+
+from ..helpers.client import ConfdClient, RestUrlClient
+
+from ..helpers.database import DbHelper
+
+from ..helpers.provd import ProvdHelper
+
+from ..helpers.ari import ARIClient
 from ..helpers.sysconfd import SysconfdMock
 from ..helpers.base import IntegrationTest
 from ..helpers.config import TOKEN
 from ..helpers.wrappers import IsolatedAction
+from ..helpers.auth import AuthClient
+from wazo_test_helpers.bus import BusClient
 
 
 class BaseIntegrationTest(IntegrationTest):
@@ -62,29 +76,28 @@ class SingletonProxy:
         self.obj = None
 
 
-confd = SingletonProxy(BaseIntegrationTest.create_confd)
-confd_csv = SingletonProxy(
+confd: RestUrlClient = SingletonProxy(BaseIntegrationTest.create_confd)  # type: ignore[assignment]
+confd_csv: RestUrlClient = SingletonProxy(
     BaseIntegrationTest.create_confd,
     {'Accept': 'text/csv; charset=utf-8', 'X-Auth-Token': TOKEN},
-)
-create_confd = BaseIntegrationTest.create_confd
-auth = SingletonProxy(BaseIntegrationTest.create_auth)
-ari = SingletonProxy(BaseIntegrationTest.create_ari)
-provd = SingletonProxy(BaseIntegrationTest.create_provd)
-db = SingletonProxy(BaseIntegrationTest.create_database)
-rabbitmq = SingletonProxy(BaseIntegrationTest.create_bus)
-sysconfd: SysconfdMock = cast(
-    SysconfdMock, SingletonProxy(BaseIntegrationTest.create_sysconfd)
-)
+)  # type: ignore[assignment]
+create_confd: ConfdClient = BaseIntegrationTest.create_confd  # type: ignore[assignment]
+auth: AuthClient = SingletonProxy(BaseIntegrationTest.create_auth)  # type: ignore[assignment]
+ari: ARIClient = SingletonProxy(BaseIntegrationTest.create_ari)  # type: ignore[assignment]
+provd: ProvdHelper = SingletonProxy(BaseIntegrationTest.create_provd)  # type: ignore[assignment]
+db: DbHelper = SingletonProxy(BaseIntegrationTest.create_database)  # type: ignore[assignment]
+rabbitmq: BusClient = SingletonProxy(BaseIntegrationTest.create_bus)  # type: ignore[assignment]
+sysconfd: SysconfdMock = SingletonProxy(BaseIntegrationTest.create_sysconfd)  # type: ignore[assignment]
 
-wazo_sound = SingletonProxy(
+
+wazo_sound: TenantFileSystemClient = SingletonProxy(
     BaseIntegrationTest.create_tenant_filesystem, '/var/lib/wazo/sounds'
-)
-asterisk_sound = SingletonProxy(
+)  # type: ignore[assignment]
+asterisk_sound: FileSystemClient = SingletonProxy(
     BaseIntegrationTest.create_filesystem, '/usr/share/asterisk/sounds'
-)
+)  # type: ignore[assignment]
 
-asterisk_json_doc = SingletonProxy(
+asterisk_json_doc: FileSystemClient = SingletonProxy(
     BaseIntegrationTest.create_filesystem,
     '/usr/share/doc/asterisk-doc/json',
-)
+)  # type: ignore[assignment]
