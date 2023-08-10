@@ -384,15 +384,17 @@ class DatabaseQueries:
     def insert_callfilter(
         self,
         name='bsfilter',
+        label='boss secretary filter',
         type_='bosssecretary',
         bosssecretary='secretary-simult',
         tenant_uuid=None,
     ):
         query = text(
             """
-        INSERT INTO callfilter (name, type, bosssecretary, tenant_uuid)
+        INSERT INTO callfilter (name, label, type, bosssecretary, tenant_uuid)
         VALUES (
         :name,
+        :label,
         :type,
         :bosssecretary,
         :tenant_uuid
@@ -404,6 +406,7 @@ class DatabaseQueries:
         return self.connection.execute(
             query,
             name=name,
+            label=label,
             type=type_,
             bosssecretary=bosssecretary,
             tenant_uuid=tenant_uuid,
