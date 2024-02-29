@@ -4,6 +4,8 @@
 from wazo_test_helpers import until
 from requests.exceptions import ConnectionError
 
+from integration_tests.suite.helpers import fixtures
+
 from ..helpers.helpers import confd as helper_confd, new_client as helper_new_client
 from . import BaseIntegrationTest, confd, confd_csv, auth
 
@@ -38,3 +40,14 @@ def test_restrict_on_with_slow_wazo_auth():
         response.assert_status(200)
 
     until.assert_(_not_return_503, tries=10)
+
+
+@fixtures.user()
+def test_token_deleted_user(user):
+    token = BaseIntegrationTest.authenticate_user(user)
+    response = confd.users(user['uuid']).get(token=token)
+    assert response.status_code == 200
+    response = confd.users(user['uuid']).delete()
+    assert response.status_code == 204
+    response = confd.users(user['uuid']).get(token=token)
+    assert response.status_code == 401
